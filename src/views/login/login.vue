@@ -1,0 +1,116 @@
+<template>
+    <div>
+        <div class="input">
+            <el-form :rules="rules" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+                <el-form-item
+                        prop="username"
+                        label="账号">
+                    <el-input v-model="dynamicValidateForm.username"></el-input>
+                </el-form-item>
+                <el-form-item
+                        label="密码"
+                        prop="password">
+                    <el-input v-model="dynamicValidateForm.password"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-checkbox v-model="checked"></el-checkbox>
+                </el-form-item>
+                <el-form-item>
+                    <el-button class="buto" type="primary" @click="submitForm()">登录</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+
+    </div>
+</template>
+
+<script>
+    import {loginRequest} from '../../networks/loginRequest'
+    import {Message} from 'element-ui'
+    export default {
+        name: "login",
+        data(){
+            return{
+                dynamicValidateForm: {
+                    username: '',
+                    password: ''
+                },
+                checked: true,
+                rules:{
+                    username: {
+                        required: true, message: '请输入邮箱地址', trigger: 'blur'
+                    },
+                    password: {
+                        required: true, message: '密码不能为空', trigger: 'blur'
+                    }
+                }
+            };
+        },
+        methods: {
+            submitForm(){
+                this.$refs.dynamicValidateForm.validate((valid)=>{
+                    //测试stringfy
+                    /*let data={
+                        abc: "dsa",
+                        bcs: "dsa"
+                    }
+                    alert(JSON.stringify(data));*/
+                    if (valid){
+                        loginRequest(this.dynamicValidateForm).then(res=> {
+
+
+                            if(res){
+                                if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
+                                    window.sessionStorage.setItem("user",JSON.stringify(res))
+                                    console.log(this);
+                                    //this的指向问题，箭头函数的环境里没有this对象，因此会一层一层往外找，到loginrequest的外层，
+                                    //因此this对象是组件对象，组件对象里注册了router和store
+                                    this.$router.replace('home')
+                                    Message.success({
+                                        message: "登录成功",
+                                        duration: 1000,
+                                    })
+                                }
+                            }
+                        }).catch(error=>{
+                            console.log(error);
+                        })
+                    }else {
+                        console.log("error");
+                    }
+                })
+            }
+
+        }
+
+    }
+</script>
+
+<style scoped>
+
+    .input{
+        width: 30%;
+        border-radius: 15px;
+        /*边线长度，实线，颜色*/
+        border: 1px solid #eaeaea;
+        /*
+           水平阴影位置，垂直阴影位置，阴影长度颜色
+        */
+        box-shadow: 0 0 25px #cac6c6;
+
+        background-clip: padding-box;
+        /*顺时针记忆*/
+
+        padding: 35px 35px 15px 35px;
+
+        margin: 180px auto;
+
+        background: #fff;
+
+    }
+    .buto{
+        width: 100%;
+    }
+
+</style>
