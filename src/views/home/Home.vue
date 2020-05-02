@@ -27,7 +27,6 @@
 -->
                         <el-col :span="24">
                             <el-menu
-                                    default-active="2"
                                     class="el-menu-vertical-demo"
                                     @open="handleOpen"
                                     @close="handleClose"
@@ -126,7 +125,8 @@ export default {
         data(){
             return {
                 user: JSON.parse(window.sessionStorage.getItem("user")),
-                route: '/'
+                route: '/',
+                /*defaultOpen: */
             }
         },
         created(){
@@ -170,6 +170,7 @@ export default {
                         logout().then(res=>{
                             Message.success(res.data.msg);
                             this.$router.replace('/')
+                            window.sessionStorage.clear();
                             this.$message({
                                 type: 'success',
                                 message: res.data.msg
@@ -180,7 +181,7 @@ export default {
                     }).catch(() => {
                         this.$message({
                             type: 'info',
-                            message: '已取消删除'
+                            message: '成功取消'
                         });
                     });
                 }else if (command==='修改密码'){

@@ -5,6 +5,7 @@
                 <el-form-item
                         prop="username"
                         label="账号">
+                    <!--v-model实现双向绑定，即将输入的数据和定义的数据绑定在一块儿-->
                     <el-input v-model="dynamicValidateForm.username"></el-input>
                 </el-form-item>
                 <el-form-item
@@ -63,10 +64,18 @@
                             if(res){
                                 if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
                                     window.sessionStorage.setItem("user",JSON.stringify(res))
-                                    console.log(this);
                                     //this的指向问题，箭头函数的环境里没有this对象，因此会一层一层往外找，到loginrequest的外层，
                                     //因此this对象是组件对象，组件对象里注册了router和store
-                                    this.$router.replace('home')
+                                    console.log(this.$route);
+                                    console.log(this.$route.query.redict);
+                                    //判断里面有没有redict的值，没有的话跳转到home，有的话直接跳转redict
+                                    //判断undefined的方法，$route里面有整个浏览器里面的输入信息包括query和query
+                                    if (typeof this.$route.query.redict==="undefined"){
+                                        this.$router.replace('/home')
+                                    }else {
+                                        this.$router.replace(this.$route.query.redict)
+                                    }
+
                                     Message.success({
                                         message: "登录成功",
                                         duration: 1000,

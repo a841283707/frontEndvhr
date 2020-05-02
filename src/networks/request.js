@@ -26,7 +26,7 @@ export  function request(config) {
     }),
     instance.interceptors.response.use(response=>{
         if (response.status===200 && response.data.status===500 ) {
-            Message.error("傻瓜密码错了，爱输不输");
+            Message.error(response.data.msg);
             return ;
         }
         return response

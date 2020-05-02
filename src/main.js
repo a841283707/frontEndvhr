@@ -16,12 +16,19 @@ Vue.use(ElementUI);
 //为什么要用beforeEach
 router.beforeEach((to,from,next)=>{
   /*只有在home页才需要动态导航栏*/
-  if (to.path!=='/'){
-    getRouters(store,router)
+  if (to.path==='/'){
+    next();
+  } else {
+    //在浏览器地址瞎吉儿输入也能跳到next（‘/’）的代码逻辑
+    if (window.sessionStorage.getItem("user")){
+      getRouters(store,router)
+      next();
+    }else {
+      next('/?redict='+to.path)
+    }
   }
   //
   //必须把from放出来继续走
-  next();
 })
 
 new Vue({
