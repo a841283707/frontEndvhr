@@ -35,9 +35,18 @@ export function deletePosition(data) {
     return request({
         url: '/sys/basic/position/'+data,
         method: 'delete',
-        /*put,delete,patch 等restful api对应的请求方式同put*/
+        /*put,delete,patch 等restful api对应的请求方式同post*/
         /*可以params和data一起传，params用于url的拼接，
         data用于请求体，contentType作用请求体*/
 
     })
+}
+
+export function deleteAll(data) {
+    return request({
+        url: '/sys/basic/position/deleteAll',
+        method: 'delete',
+        data: data
+    })
+
 }

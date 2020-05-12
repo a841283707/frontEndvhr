@@ -49,3 +49,36 @@ export  function request(config) {
     })
     return instance.request(config)
 }
+
+export function postRequest(url,data) {
+    return request({
+        url: url,
+        method:'post',
+        data: data
+    })
+}
+
+export function putRequest(url,data) {
+    return request({
+        url: url,
+        method: 'put',
+        data: data
+    })
+
+}
+
+export function getRequest(url,data) {
+    return request({
+        url: url,
+        params: data,
+        method: 'get'
+    })
+}
+
+export function deleteRequest(url,data) {
+    return request({
+        url: url,
+        method: 'delete',
+        params: data
+    })
+}

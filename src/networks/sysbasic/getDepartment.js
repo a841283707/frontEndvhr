@@ -32,3 +32,4 @@ export function deleteDepartment(data) {
         data: Qs.stringify(data)
     })
 }
+

@@ -1,64 +1,81 @@
 <template>
     <div>
         <div>
-            <el-form :inline="true">
+            <el-form :inline="true" style="margin-bottom: -15px">
                 <el-form-item >
                     <!--input里面设置100%不起作用，设置px起作用，怀疑是继承了父级的宽度，而父级的宽度被限制-->
                     <el-input
                             style="width: 320px"
                             placeholder="请输入内容"
-                            v-model="positionName">
+                            v-model="grade.name">
                         <i slot="prefix" class="el-input__icon el-icon-search"></i>
                     </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-select placeholder="请选择职称等级" v-model="grade.titlelevel" >
+                        <el-option v-for="(item,index) in titleGrades"  :label="item" :key="index" :value="item">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">添加</el-button>
                 </el-form-item>
             </el-form>
             <el-dialog
-                    title="请修改当前选择的部门名称"
+                    title="请修改当前选择的职称名称"
                     :visible.sync="dialogVisible"
                     width="30%"
             >
                 <div slot="title">
-                    <span style="font-size: 26px">请修改当前选择的部门名称</span>
+                    <span style="font-size: 26px">请修改当前选择的职称名称</span>
                 </div>
                 <!--在关闭之前执行的函数-->
                 <div>
-                    <el-input v-model="position.name"></el-input>
+                    <el-form v-model="diaGrade">
+                        <el-input  v-model="diaGrade.name"></el-input>
+                        <el-select style="margin-top: 10px" placeholder="请选择职称等级" v-model="diaGrade.titlelevel" >
+                            <el-option v-for="(item,index) in titleGrades"  :label="item" :key="index" :value="item">
+                            </el-option>
+                        </el-select>
+                    </el-form>
                 </div>
                 <span slot="footer" class="dialog-footer">
                             <el-button @click="dialogVisible = false">取 消</el-button>
-                            <el-button type="primary" @click="updatePosition">确 定</el-button>
+                            <el-button type="primary" @click="updateGrade">确 定</el-button>
                 </span>
             </el-dialog>
 
         </div>
-        <div style="width: 60%">
+        <div style="width: 75%">
             <template>
+                <!--表格列的宽度设置为%指的是相当于原来的表格宽度，指定为数字是px-->
                 <el-table
                         size="small"
-                        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+                        border
+                        :data="grades.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
                         @select="handleSelect">
-                    <el-table-column
-                            type="selection"
-                            width="55">
-                    </el-table-column>
+
                     <el-table-column
                             label="编号"
-                            prop="id">
+                            prop="id"
+                    width="77">
                     </el-table-column>
                     <el-table-column
-                            label="职位名称"
+                            label="职称名称"
                             prop="name">
+                    </el-table-column>
+                    <el-table-column
+                            label="职称级别"
+                            prop="titlelevel">
                     </el-table-column>
                     <el-table-column
                             label="创建时间"
                             prop="createdate">
                     </el-table-column>
                     <el-table-column
-                            align="right">
+                            label="操作"
+                            align="center">
                         <!--通过slot自定义列表表头，通过slot-scope自定义列表-->
                         <!--<template slot="header" slot-scope="scope">
                             <el-input
@@ -74,31 +91,10 @@
                             <el-button
                                     size="mini"
                                     type="danger"
-                                    @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                                    @click="deleteGrade(scope.$index, scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <div style="margin-top: 20px">
-                    <el-button type="warning" @click="diaVisible=true">删除所选职位</el-button>
-                </div>
-                <el-dialog
-                        title="温馨提示"
-                        :visible.sync="diaVisible"
-                        width="30%"
-                >
-                    <div slot="title">
-                        <span style="font-size: 26px">温馨提示</span>
-                    </div>
-                    <!--在关闭之前执行的函数-->
-                    <div>
-                        <i class="el-icon-warning-outline"></i>将删除选中行
-                    </div>
-                    <span slot="footer" class="dialog-footer">
-                            <el-button @click="diaVisible = false">取 消</el-button>
-                            <el-button type="primary" @click="deleteAll">确 定</el-button>
-                </span>
-                </el-dialog>
-
             </template>
         </div>
     </div>
@@ -106,14 +102,35 @@
 
 <script>
     import {getPosition,addPosition,updatePosition,deletePosition,deleteAll} from "../../networks/sysbasic/getPosition";
+    import {getGrades,addGrade} from "../../networks/sysbasic/jobLevel";
+    import {deleteRequest,putRequest} from '../../networks/request'
+
 
     export default {
         name: "JobManage",
         created(){
-          this.getAllData();
+            this.getGrades();
         },
         data(){
             return {
+                titleGrades: [
+                '正高级',
+                '副高级',
+                '中级',
+                '初级',
+                '员级',
+                ],
+                grades: '',
+                diaGrade: {
+                    id: '',
+                    name: '',
+                    titlelevel: '',
+                },
+                grade: {
+                    id: '',
+                    name: '',
+                    titlelevel: '',
+                },
                 diaVisible: false,
                 selection: '',
                 position: {
@@ -123,36 +140,29 @@
                 dialogVisible: false ,
                 positionName: '',
                 search: '',
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }],
+                tableData: []
             }
         },
         methods: {
-            deleteAll(){
-                console.log(this.selection);
-                deleteAll(this.selection).then(res=>{
+            getGrades(){
+                getGrades().then(res=>
+                {
+                    this.grades=res.data;
+                    console.log(res);
+                }).catch(error=>{
+                    console.log(error);
+                })
+            },
+            deleteGrade(index,row){
+                console.log(row);
+                deleteRequest('/sys/basic/jobLevel/deleteGrade',{id: row.id}).then(res=>{
                     if (res.status===200 && res.data.status===200){
                         this.$message.success(res.data.msg)
-                        this.getAllData();
+                        this.getGrades();
                         this.diaVisible=false;
                     } else {
                         this.$message.error(res.data.msg);
-                        this.getAllData();
+                        this.getGrades();
                         this.diaVisible=false;
                     }
                 }).catch(error=>{
@@ -164,24 +174,24 @@
                 this.selection=selection;
             },
             onSubmit(){
-                addPosition({positionName: this.positionName}).then(res=>{
+                addGrade(this.grade).then(res=>{
                     if (res.status===200 && res.data.status===200){
                         this.$message.success("添加成功")
-                        this.positionName=''
-                        this.getAllData();
+                        this.grade='';
+                        this.getGrades();
                     } else {
                         this.$message.error(res.data.msg);
                     }
                 }).catch(error=>{
-                    this.Message.error("发生错误");
+                    this.$message.error("发生错误");
                 });
                 /*不能把函数写在这儿因为可能会先执行下面的函数，必须按照顺序*/
             },
-            updatePosition(){
-                updatePosition(this.position).then(res=>{
+            updateGrade(){
+                putRequest('/sys/basic/jobLevel/updataGrade',this.diaGrade).then(res=>{
                     if (res.status===200 && res.data.status===200){
                         this.$message.success("修改成功");
-                        this.getAllData();
+                        this.getGrades();
                     } else {
                         this.$message.error(res.data.msg)
                     }
@@ -191,17 +201,12 @@
                 this.dialogVisible=false;
 
             },
-            getAllData(){
-              getPosition().then(res=>{
-                  this.tableData=res.data
-              }).catch(error=>{
-                  console.log(error);
-              })
-            },
             handleEdit(index, row) {
+                console.log(row);
                 this.dialogVisible=true;
-                this.position.name=row.name;
-                this.position.id=row.id
+                this.diaGrade.name=row.name;
+                this.diaGrade.titlelevel=row.titlelevel
+                this.diaGrade.id=row.id
             },
             handleDelete(index, row) {
                 this.position.id=row.id;

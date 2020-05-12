@@ -81,7 +81,7 @@
                     <JobManage/>
                 </el-tab-pane>
                 <el-tab-pane label="职称管理" name="third">
-
+                    <JobLevel/>
                 </el-tab-pane>
                 <el-tab-pane label="奖惩规则" name="fourth">
 
@@ -98,11 +98,13 @@
     import {getDepartment,getName,insertDepartment,deleteDepartment} from "../networks/sysbasic/getDepartment";
     import {Message} from 'element-ui'
     import JobManage from './sysBasic/JobManage'
+    import JobLevel from './sysBasic/JobLevel'
     let id=1000;
     export default {
         name: "SysBasic",
         components: {
           JobManage,
+          JobLevel,
         },
         watch: {
             filterText(val) {
