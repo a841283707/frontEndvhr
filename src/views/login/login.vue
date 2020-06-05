@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class="input">
+    <div class="main">
+        <div class="input" >
             <el-form :rules="rules" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
                 <el-form-item
                         prop="username"
@@ -99,6 +99,7 @@
 <style scoped>
 
     .input{
+        height: 30vh;
         width: 30%;
         border-radius: 15px;
         /*边线长度，实线，颜色*/
@@ -108,18 +109,26 @@
         */
         box-shadow: 0 0 25px #cac6c6;
 
+        background: ;
         background-clip: padding-box;
         /*顺时针记忆*/
 
         padding: 35px 35px 15px 35px;
 
-        margin: 180px auto;
 
-        background: #fff;
+        /*margin: 180px auto;*/
+
 
     }
     .buto{
         width: 100%;
+    }
+    .main{
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        background: url(../../../public/assert/background.png);
     }
 
 </style>
