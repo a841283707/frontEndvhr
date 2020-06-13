@@ -50,11 +50,12 @@ export  function request(config) {
     return instance.request(config)
 }
 
-export function postRequest(url,data) {
+export function postRequest(url,data,data1) {
     return request({
         url: url,
         method:'post',
-        data: data
+        params: data,
+        data: data1
     })
 }
 
@@ -67,11 +68,10 @@ export function putRequest(url,data) {
 
 }
 
-export function getRequest(url,data,data1) {
+export function getRequest(url,data) {
     return request({
         url: url,
         params: data,
-        data: data1,
         method: 'get'
     })
 }

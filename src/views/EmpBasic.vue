@@ -2,13 +2,19 @@
     <div style="padding: 3vh 1vh">
             <el-form size="small" :inline="true"  class="empNameInline">
                 <el-form-item label="员工名：">
-                    <el-input v-model="empName"  @keyup.enter="getInitEmpWithName" placeholder="请通过员工名进行搜索" prefix-icon="el-icon-search"></el-input>
+                    <!--clearable是什么意思-->
+                    <el-input v-model="employee.name"
+                              :disabled="ifVisible"
+                              clearable
+                              @keyup.enter="getInitEmp"
+                              placeholder="请通过员工名进行搜索"
+                              prefix-icon="el-icon-search"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button icon="el-icon-search" type="primary" @click="getInitEmpWithName">搜索</el-button>
+                    <el-button icon="el-icon-search" type="primary" @click="getInitEmp">搜索</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="ifVisible=!ifVisible" >
+                    <el-button type="primary" @click="clickSearch" >
                         <i class="fa fa-angle-double-down" aria-hidden="true" style="margin-right: 10px"></i>高级搜索
                     </el-button>
                 </el-form-item>
@@ -16,63 +22,60 @@
             <transition name="el-fade-in-linear">
                 <div v-show="ifVisible" style="border: 1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding-left: 40px;padding-top: 10px;margin-bottom: 10px" >
                     <el-row>
+                        <!--所有的item在一行，按照el-col划分长度,一共分24列-->
+                        <!--一共两列所以两个form-->
+                        <!--思考用一个form，去除inline，一个form-item一行，然后span划分长度-->
                         <el-form size="small" :inline="true">
                             <el-col :span="4">
                                 <el-form-item label="政治面貌">
-                                    <el-select v-model="employee.politicid" placeholder="请选择活动区域" style="width: 150px">
-                                        <el-option label="区域一" value="shanghai"></el-option>
-                                        <el-option label="区域二" value="beijing"></el-option>
+                                    <el-select v-model="employee.politicid" placeholder="请选择政治身份" style="width: 150px">
+                                        <!--必须要有:key标记不同的for循环产生的-->
+                                        <el-option v-for="item in politic" :key="item.id" :label="item.name" :value="item.id"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="4">
                                 <el-form-item label="民族">
-                                    <el-select v-model="employee.nationid" placeholder="请选择活动区域" style="width: 150px">
-                                        <el-option label="区域一" value="shanghai"></el-option>
-                                        <el-option label="区域二" value="beijing"></el-option>
+                                    <el-select v-model="employee.nationid" placeholder="请选择民族" style="width: 150px">
+                                        <el-option v-for="item in this.nation" :key="item.id" :label="item.name" :value="item.id"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="4">
                                 <el-form-item label="职位">
-                                    <el-select v-model="employee.posid" placeholder="请选择活动区域" style="width: 150px">
-                                        <el-option label="区域一" value="shanghai"></el-option>
-                                        <el-option label="区域二" value="beijing"></el-option>
+                                    <el-select v-model="employee.posid" placeholder="请选择职位" style="width: 150px">
+                                        <el-option v-for="item in this.position" :key="item.id" :label="item.name" :value="item.id"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="4">
                                 <el-form-item label="职称">
-                                    <el-select v-model="employee.joblevelid" placeholder="请选择活动区域" style="width: 150px">
-                                        <el-option label="区域一" value="shanghai"></el-option>
-                                        <el-option label="区域二" value="beijing"></el-option>
+                                    <el-select v-model="employee.joblevelid" placeholder="请选择活动职称" style="width: 150px">
+                                        <el-option v-for="item in this.joblevel" :key="item.id" :label="item.name" :value="item.id"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="8">
                                 <el-form-item label="聘用形式">
                                     <el-radio-group v-model="employee.engageform">
-                                        <el-radio :label="3">劳务合同</el-radio>
-                                        <el-radio :label="6">劳动合同</el-radio>
+                                        <el-radio label="劳务合同">劳务合同</el-radio>
+                                        <el-radio label="劳动合同">劳动合同</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
                         </el-form>
                     </el-row>
                     <el-row>
-                        <el-col :span="8">
-                            <el-form size="medium" :inline="true">
+                        <el-form size="small" :inline="true">
+                            <el-col :span="8">
                                 <el-form-item label="所属部门">
                                     <el-select v-model="employee.departmentid" placeholder="所属部门" style="width: 150px">
                                         <option label="">
-
                                         </option>
                                     </el-select>
                                 </el-form-item>
-                            </el-form>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form size="medium" :inline="true">
+                            </el-col>
+                            <el-col :span="8">
                                 <el-form-item label="入职日期">
                                     <el-date-picker
                                             v-model="value1"
@@ -82,14 +85,25 @@
                                             end-placeholder="结束日期">
                                     </el-date-picker>
                                 </el-form-item>
-                            </el-form>
-                        </el-col>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item>
+                                    <el-button size="small" @click="ifVisible=!ifVisible">
+                                        取消
+                                    </el-button>
+                                    <el-button type="primary" size="small" icon="el-icon-search" @click="searchForAdvance">
+                                        高级搜索
+                                    </el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-form>
                     </el-row>
                 </div>
             </transition>
         <el-table
                 :data="tableData"
                 border
+                size="small"
                 style="width: 100%">
             <el-table-column
                     fixed
@@ -202,7 +216,7 @@
 </template>
 
 <script>
-    import {getRequest} from "../networks/request";
+    import {postRequest,getRequest, request} from "../networks/request";
     import {Message} from 'element-ui'
     export default {
         name: "EmpBasic",
@@ -211,10 +225,10 @@
                 console.log(row);
             },
             getEmpByPage(page,size){
-                getRequest("/employee/basic/",{
+                postRequest("/employee/basic/",{
                     page: page,
-                    size: size
-                }).then(res=>{
+                    size: size,
+                },this.employee).then(res=>{
                     this.tableData=res.data.employees;
                     this.total=res.data.total
                 }).catch(error=>{
@@ -224,37 +238,70 @@
             getInitEmp(){
                 this.getEmpByPage(1,9)
             },
-            getInitEmpWithName(){
-                getRequest("/employee/basic/",{
-                    page: 1,
-                    size: 9,
-                    name: this.empName
-                }).then(res=>{
-                    this.tableData=res.data.employees;
-                    this.total=res.data.total
-                }).catch(error=>{
-                    Message.error("出现错误")
-                })
-            },
+
             handleSizeChange(val){
                 this.currentSize=val;
-                if (this.empName!=='' && this.empName!==''){
-                    this.getInitEmpWithName()
-                }else {
-                    this.getInitEmp();
-                }
+                this.getEmpByPage(this.currentPage,this.currentSize);
             },
             handleCurrentChange(val){
                 this.currentPage=val;
-                if (this.empName!=='' && this.empName!==''){
-                    this.getInitEmpWithName()
-                }else {
-                    this.getInitEmp();
-                }
-            }
+                this.getEmpByPage(this.currentPage,this.currentSize);
+            },
+            clickSearch(){
+              this.employee.name='';
+              this.ifVisible=!this.ifVisible
+            },
+            searchForAdvance(){
+                this.getEmpByPage(1,9)
+            },
+            getNation(){
+                getRequest("/employee/basic/getNation").then(
+                    res=>{
+                        this.nation=res.data
+                    }
+                ).catch(error=>{
+                    Message.error("出现错误")
+                })
+            },
+            getPolitic(){
+                getRequest("/employee/basic/getPolitic").then(
+                    res=>{
+                        this.politic=res.data
+                    }
+                ).catch(error=>{
+                    Message.error("政治身份拉取失败")
+                })
+            },
+            getJoblevel(){
+                getRequest("/employee/basic/getJobLevel").then(
+                    res=>{
+                        this.joblevel=res.data;
+                    }
+                )
+            },
+            getDepertment(){
+                getRequest("/employee/basic/getNation").then(
+                    res=>{
+
+                    }
+                )
+            },
+            getPosition(){
+                getRequest("/employee/basic/getPosition").then(
+                    res=>{
+                        this.position=res.data;
+                    }
+                ).catch(error=>{
+                    Message.error("出现错误");
+                })
+            },
         },
         created(){
           this.getInitEmp();
+          this.getPolitic();
+          this.getNation();
+          this.getJoblevel();
+          this.getPosition();
         },
         data() {
             return {
@@ -265,10 +312,15 @@
                     posid: '',
                     joblevelid: '',
                     departmentid: '',
-                    engageform: 3,
+                    engageform: '',
                     begincontract: '',
                     endcontract: '',
                 },
+                politic: '',
+                nation: '',
+                position: '',
+                joblevel: '',
+                department: '',
                 ifVisible: false,
                 value1: [],
                 empName:'',
