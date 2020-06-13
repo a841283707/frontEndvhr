@@ -67,10 +67,11 @@ export function putRequest(url,data) {
 
 }
 
-export function getRequest(url,data) {
+export function getRequest(url,data,data1) {
     return request({
         url: url,
         params: data,
+        data: data1,
         method: 'get'
     })
 }
