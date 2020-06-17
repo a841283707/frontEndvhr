@@ -18,6 +18,29 @@
                         <i class="fa fa-angle-double-down" aria-hidden="true" style="margin-right: 10px"></i>高级搜索
                     </el-button>
                 </el-form-item>
+                <!--后端参数设置为file-->
+                <el-form-item style="margin-left: 80vh">
+                    <el-upload
+                            class="upload-demo"
+                            action="/employee/basic/upload"
+                            :on-preview="handlePreview"
+                            :show-file-list="false"
+                            :auto-upload="true"
+                            :limit="1"
+                            >
+                        <el-button size="medium" type="success">导入Excel</el-button>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="success" @click="" size="medium" >
+                        导出Excel
+                    </el-button>
+                </el-form-item>
+                <el-form-item style="margin-left: 5vh">
+                    <el-button type="primary" @click="addEmployee" size="medium" >
+                        增加员工
+                    </el-button>
+                </el-form-item>
             </el-form>
             <transition name="el-fade-in-linear">
                 <div v-show="ifVisible" style="border: 1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding-left: 40px;padding-top: 10px;margin-bottom: 10px" >
@@ -221,6 +244,13 @@
     export default {
         name: "EmpBasic",
         methods: {
+            addEmployee(){
+
+            },
+            handlePreview(){
+
+            },
+
             handleClick(row) {
                 console.log(row);
             },
