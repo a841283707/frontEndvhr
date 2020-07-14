@@ -6,6 +6,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import store from './store'
 import {getRouters} from  './networks/getSides/getSides'
+/*构建方式 node+npm/webpack/webpack-cli/vue-cli/构建项目*/
+/*启动项目 npm  install+npm run serve*/
 //使用ElementUi和font-awesome
 import 'font-awesome/css/font-awesome.css'
 
