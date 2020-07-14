@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="input" >
-            <el-form :rules="rules" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
+            <el-form size="medium" :rules="rules" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px" class="demo-dynamic">
                 <el-form-item
                         prop="username"
                         label="账号">
@@ -13,6 +13,18 @@
                         prop="password">
                     <el-input v-model="dynamicValidateForm.password"></el-input>
                 </el-form-item>
+                <!--inline-block处于一行的元素会同高，改变一个元素的高度会影响其他元素的高度-->
+                <div style="display: flex">
+                    <el-form-item prop="validate" style="padding-top: 39px" label="验证码">
+                        <el-input  class="validate-code" placeholder="验证码"  style="width: 100%;" ></el-input>
+                    </el-form-item>
+                    <div class="code" @click="refreshCode"  style="margin-left: 200px;margin-top: 10px">
+                        <Identity :identifyCode="identifyCode" :content-width="160" :content-height="60" style="margin-top: 10px"></Identity>
+                    </div>
+                </div>
+
+
+
                 <el-form-item>
                     <el-checkbox v-model="checked"></el-checkbox>
                 </el-form-item>
@@ -29,14 +41,24 @@
 <script>
     import {loginRequest} from '../../networks/loginRequest'
     import {Message} from 'element-ui'
+    import Identity from '../commonView/Identity'
     export default {
         name: "login",
+        created(){
+            alert("11")
+            this.refreshCode();
+        },
+        components:{
+            Identity,
+        },
         data(){
             return{
+                identifyCodes: "1234567890",
                 dynamicValidateForm: {
                     username: '',
-                    password: ''
+                    password: '',
                 },
+                identifyCode: "",
                 checked: true,
                 rules:{
                     username: {
@@ -44,11 +66,27 @@
                     },
                     password: {
                         required: true, message: '密码不能为空', trigger: 'blur'
-                    }
+                    },
+
                 }
             };
         },
         methods: {
+            randomNum (min, max) {
+                return Math.floor(Math.random() * (max - min) + min)
+            },
+            refreshCode() {
+                this.identifyCode = "";
+                this.makeCode(this.identifyCodes, 4);
+            },
+            makeCode(o, l) {
+                for (let i = 0; i < l; i++) {
+                    this.identifyCode += this.identifyCodes[
+                        this.randomNum(0, this.identifyCodes.length)
+                        ];
+                }
+                console.log(this.identifyCode);
+            },
             submitForm(){
                 this.$refs.dynamicValidateForm.validate((valid)=>{
                     //测试stringfy
@@ -109,7 +147,7 @@
         */
         box-shadow: 0 0 25px #cac6c6;
 
-        background: ;
+        /*background: ;*/
         background-clip: padding-box;
         /*顺时针记忆*/
 
@@ -130,5 +168,9 @@
         height: 100vh;
         background: url(../../../public/assert/background.png);
     }
+    .validate-code > input{
+        height: 100px;
+    }
+
 
 </style>
