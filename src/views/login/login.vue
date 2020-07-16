@@ -96,7 +96,7 @@
                     alert(JSON.stringify(data));*/
                     if (valid){
                         if (this.dynamicValidateForm.validate===this.identifyCode){
-                            loginRequest(this.dynamicValidateForm).then(res=> {
+                            loginRequest('/doLogin',this.dynamicValidateForm).then(res=> {
                                 if(res){
                                     if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
                                         window.sessionStorage.setItem("user",JSON.stringify(res))

@@ -10,6 +10,7 @@
                     :rules="resetFormRules"
                     ref="resetForm"
                     status-icon
+                    :model="resetForm"
                     label-width="100px"
             >
                 <el-form-item label="旧密码：" prop="password">
@@ -35,6 +36,9 @@
 <script>
     // import api from "@/api";//这是我个人全局定义单独用来接收url接口的文件，不作参考
     // import { getUsername } from "@/utils/auth";//这是我个人调用封装获取当前账户的username，不作参考
+    import {postRequest} from "../../networks/request";
+    import {loginRequest} from "../../networks/loginRequest";
+
     export default {
         data() {
             var validatePass = (rule, value, callback) => {
@@ -79,8 +83,14 @@
             toAmend() {
                 this.$refs.resetForm.validate(valid => {
                     if (valid) {
-                        //这里的api.materialQuery.toAmend是调用前期我们统一的api接口url路径，不作参考 ，只要把后台需要的字段正常传进去即可
-                        api.materialQuery.toAmend(this.resetForm)
+                        loginRequest('/change/updatePassword',this.resetForm).then(res => {
+                            console.log(res);
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    }
+                    //这里的api.materialQuery.toAmend是调用前期我们统一的api接口url路径，不作参考 ，只要把后台需要的字段正常传进去即可
+                    /*api.materialQuery.toAmend(this.resetForm)
                             .then(res => {
                                 if(res.code === 2){
                                     this.$message({
@@ -100,14 +110,15 @@
                             })
                             .catch(() => {});
                     }
-                });
-            },
-            //这是修改成功后重新返回登陆页的方法，看个人需要自行调整
-            async logout() {
+                });*/
+                })
+                //这是修改成功后重新返回登陆页的方法，看个人需要自行调整
+                /*async logout() {
                 await this.$store.dispatch("user/logout");
                 this.$router.push(`/login`);
+            }*/
             }
-        },
+        }
     };
 </script>
 

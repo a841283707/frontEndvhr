@@ -3,10 +3,10 @@ import {request} from './request'
 import Qs from 'qs'
 
 
-export function loginRequest(data) {
+export function loginRequest(url,data) {
 
     return request({
-        url: '/doLogin',
+        url: url,
         data: Qs.stringify(data),
         method: 'post',
         contentType: 'application/x-www-form-urlencoded'

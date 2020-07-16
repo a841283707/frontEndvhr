@@ -19,7 +19,7 @@
                     </el-button>
                 </el-form-item>
                 <!--后端参数设置为file-->
-                <el-form-item style="margin-left: 80vh">
+                <el-form-item style="margin-left: 60vh">
                     <el-upload
                             class="upload-demo"
                             action="/employee/basic/upload"
