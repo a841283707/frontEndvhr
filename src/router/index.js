@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/login/login.vue'
 import Home from '../views/home/Home'
+import ChangePassword from '../views/login/ChangePassword'
 import ViewOne from '../views/siderView/viewOne'
 Vue.use(VueRouter)
 
@@ -20,6 +21,11 @@ Vue.use(VueRouter)
       //碰到在一个路由页面需要动态显示某些页面的话一定要想到路由嵌套
       hidden: false
     },
+    {
+      path: '/changePassword',
+      name: 'changePassword',
+      component: ChangePassword
+    }
 ]
 
 const router = new VueRouter({

@@ -185,7 +185,9 @@ export default {
                         });
                     });
                 }else if (command==='修改密码'){
-
+                }
+                if (command==="修改密码"){
+                    this.$router.push('/changePassword')
                 }
             }
         }
