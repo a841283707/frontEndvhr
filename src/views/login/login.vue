@@ -14,20 +14,15 @@
                     <el-input v-model="dynamicValidateForm.password"></el-input>
                 </el-form-item>
                 <!--inline-block处于一行的元素会同高，改变一个元素的高度会影响其他元素的高度-->
-                <div style="display: flex">
-                    <el-form-item prop="validate" style="padding-top: 39px" label="验证码">
-                        <el-input  class="validate-code" placeholder="验证码"  style="width: 100%;" ></el-input>
+                <div style="display: flex;margin-top: -20px">
+                    <el-form-item prop="validate" style="padding-top: 39px"  label="验证码">
+                        <el-input  class="validate-code" placeholder="验证码" v-model="dynamicValidateForm.validate"  style="width: 100%;" ></el-input>
                     </el-form-item>
-                    <div class="code" @click="refreshCode"  style="margin-left: 200px;margin-top: 10px">
+                    <div class="code" @click="refreshCode"  style="margin-left: 100px;margin-top: 10px">
                         <Identity :identifyCode="identifyCode" :content-width="160" :content-height="60" style="margin-top: 10px"></Identity>
                     </div>
                 </div>
 
-
-
-                <el-form-item>
-                    <el-checkbox v-model="checked"></el-checkbox>
-                </el-form-item>
                 <el-form-item>
                     <el-button class="buto" type="primary" @click="submitForm()">登录</el-button>
                 </el-form-item>
@@ -45,7 +40,7 @@
     export default {
         name: "login",
         created(){
-            alert("11")
+            // alert("11")
             this.refreshCode();
         },
         components:{
@@ -57,6 +52,7 @@
                 dynamicValidateForm: {
                     username: '',
                     password: '',
+                    validate: '',
                 },
                 identifyCode: "",
                 checked: true,
@@ -67,6 +63,9 @@
                     password: {
                         required: true, message: '密码不能为空', trigger: 'blur'
                     },
+                    validate: {
+                        required:true, message:'验证码不能为空', trigger: 'blur'
+                    }
 
                 }
             };
@@ -96,33 +95,36 @@
                     }
                     alert(JSON.stringify(data));*/
                     if (valid){
-                        loginRequest(this.dynamicValidateForm).then(res=> {
+                        if (this.dynamicValidateForm.validate===this.identifyCode){
+                            loginRequest(this.dynamicValidateForm).then(res=> {
+                                if(res){
+                                    if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
+                                        window.sessionStorage.setItem("user",JSON.stringify(res))
+                                        //this的指向问题，箭头函数的环境里没有this对象，因此会一层一层往外找，到loginrequest的外层，
+                                        //因此this对象是组件对象，组件对象里注册了router和store
+                                        console.log(this.$route);
+                                        console.log(this.$route.query.redict);
+                                        //判断里面有没有redict的值，没有的话跳转到home，有的话直接跳转redict
+                                        //判断undefined的方法，$route里面有整个浏览器里面的输入信息包括query和query
+                                        if (typeof this.$route.query.redict==="undefined"){
+                                            this.$router.replace('/home')
+                                        }else {
+                                            this.$router.replace(this.$route.query.redict)
+                                        }
 
-
-                            if(res){
-                                if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
-                                    window.sessionStorage.setItem("user",JSON.stringify(res))
-                                    //this的指向问题，箭头函数的环境里没有this对象，因此会一层一层往外找，到loginrequest的外层，
-                                    //因此this对象是组件对象，组件对象里注册了router和store
-                                    console.log(this.$route);
-                                    console.log(this.$route.query.redict);
-                                    //判断里面有没有redict的值，没有的话跳转到home，有的话直接跳转redict
-                                    //判断undefined的方法，$route里面有整个浏览器里面的输入信息包括query和query
-                                    if (typeof this.$route.query.redict==="undefined"){
-                                        this.$router.replace('/home')
-                                    }else {
-                                        this.$router.replace(this.$route.query.redict)
+                                        Message.success({
+                                            message: "登录成功",
+                                            duration: 1000,
+                                        })
                                     }
-
-                                    Message.success({
-                                        message: "登录成功",
-                                        duration: 1000,
-                                    })
                                 }
-                            }
-                        }).catch(error=>{
-                            console.log(error);
-                        })
+                            }).catch(error=>{
+                                console.log(error);
+                            })
+                        }else {
+                            Message.error("验证码错误")
+                        }
+
                     }else {
                         console.log("error");
                     }
