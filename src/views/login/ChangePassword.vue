@@ -3,7 +3,8 @@
     <div class="app-container common-list-page">
         <el-container style="text-align: center;margin-top: 10%">
             <el-header>
-                <span>刘翔管理员，请修改您的密码</span>
+                <span>尊敬的<span style="color: #409eff">{{user.name}}</span>
+                        <span style="color: crimson;margin-left: 10px">{{user.username}}</span>请修改您的密码</span>
             </el-header>
             <el-main>
                 <el-form
@@ -39,6 +40,7 @@
     import {postRequest} from "../../networks/request";
     import {loginRequest} from "../../networks/loginRequest";
     import {Message} from "element-ui"
+    import {logout} from "../../networks/loginRequest";
 
     export default {
         data() {
@@ -67,6 +69,8 @@
                     password: "",
                     username: ""//此处只是后台需要的字段而已，如果前期有公用cookie里面有获取并且保存过，现在需要另外调用进来，具体的获取方法就看个人了
                 },
+                user: JSON.parse(window.sessionStorage.getItem("user")).data.object,
+                timeToLeave: 4,
                 resetFormRules: {
                     password: [
                         { required: true, message: "请输入旧密码", trigger: 'blur' }
@@ -81,12 +85,31 @@
             };
         },
         methods: {
+            toLeaveTime(){
+                setInterval(()=>{
+                    this.timeToLeave=this.timeToLeave--;
+                },1000)
+            },
             toAmend() {
                 this.$refs.resetForm.validate(valid => {
                     if (valid) {
                         loginRequest('/change/updatePassword',this.resetForm).then(res => {
-                            // if (res.data.code==)
-                            Message.success(res.data.data)
+                            if (res.data.code===1001){
+                                Message.error("修改失败"+res.data.message);
+                                this.resetForm.password='';
+                            }else if (res.data.code===1000){
+                                Message.success(res.data.data+"将在三秒后跳转至登录页，请牢记你重置的密码")//+this.timeToLeave+"s"
+                                setTimeout(() => {
+                                    /*关于页面的传参问题个人博客https://blog.csdn.net/weixin_43532415/article/details/107425798*/
+                                    logout().then(res=>{
+                                        this.$router.replace({name: 'Login',params: {password: this.resetForm.newpassword1}})
+                                        window.sessionStorage.clear();
+                                    })
+                                },3000);
+                            }else {
+                                Message.error("出现未知状态")
+                            }
+
                         }).catch(error => {
                             console.log(error);
                         });

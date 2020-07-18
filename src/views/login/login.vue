@@ -11,7 +11,7 @@
                 <el-form-item
                         label="密码"
                         prop="password">
-                    <el-input v-model="dynamicValidateForm.password"></el-input>
+                    <el-input type="password" v-model="dynamicValidateForm.password" auto-complete="off"></el-input>
                 </el-form-item>
                 <!--inline-block处于一行的元素会同高，改变一个元素的高度会影响其他元素的高度-->
                 <div style="display: flex;margin-top: -20px">
@@ -50,8 +50,9 @@
             return{
                 identifyCodes: "1234567890",
                 dynamicValidateForm: {
-                    username: '',
-                    password: '',
+                    username: 'admin',
+                    // 发布时要更改的 this.$route.params.password,
+                    password: '123456',
                     validate: '',
                 },
                 identifyCode: "",
@@ -100,6 +101,7 @@
                                 if(res){
                                     if(res.status===200 && res.data.status===200 && res.data.msg==="登录成功"){
                                         window.sessionStorage.setItem("user",JSON.stringify(res))
+                                        console.log(res);
                                         //this的指向问题，箭头函数的环境里没有this对象，因此会一层一层往外找，到loginrequest的外层，
                                         //因此this对象是组件对象，组件对象里注册了router和store
                                         console.log(this.$route);
@@ -120,13 +122,16 @@
                                 }
                             }).catch(error=>{
                                 console.log(error);
+                                this.refreshCode()
                             })
                         }else {
                             Message.error("验证码错误")
+                            this.refreshCode()
                         }
 
                     }else {
                         console.log("error");
+                        this.refreshCode()
                     }
                 })
             }
