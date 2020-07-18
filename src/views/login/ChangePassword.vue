@@ -38,6 +38,7 @@
     // import { getUsername } from "@/utils/auth";//这是我个人调用封装获取当前账户的username，不作参考
     import {postRequest} from "../../networks/request";
     import {loginRequest} from "../../networks/loginRequest";
+    import {Message} from "element-ui"
 
     export default {
         data() {
@@ -84,7 +85,8 @@
                 this.$refs.resetForm.validate(valid => {
                     if (valid) {
                         loginRequest('/change/updatePassword',this.resetForm).then(res => {
-                            console.log(res);
+                            // if (res.data.code==)
+                            Message.success(res.data.data)
                         }).catch(error => {
                             console.log(error);
                         });
