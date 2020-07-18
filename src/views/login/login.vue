@@ -52,7 +52,7 @@
                 dynamicValidateForm: {
                     username: 'admin',
                     // 发布时要更改的 this.$route.params.password,
-                    password: '123456',
+                    password: this.$route.params.password,
                     validate: '',
                 },
                 identifyCode: "",
