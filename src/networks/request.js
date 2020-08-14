@@ -8,8 +8,8 @@ const instance=axios.create({
     //踩坑任何访问路径必须带上协议头
     //遇到跨域问题时首先也要往本机发送请求
     //然后在代理处改变域名
-    baseURL: 'http://49.4.115.117:8084/api/',
-    // baseURL: 'http://localhost:8012',
+    // baseURL: 'http://49.4.115.117:8084/api/',
+    baseURL: 'http://localhost:8012',
     timeout: 3000
 })
 

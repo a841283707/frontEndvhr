@@ -13,6 +13,7 @@
                         <el-dropdown-item command="账户">账户信息</el-dropdown-item>
                         <el-dropdown-item command="修改密码">修改密码</el-dropdown-item>
                         <el-dropdown-item command="注销">注销登录</el-dropdown-item>
+                        <el-dropdown-item command="聊天">聊天</el-dropdown-item>
 <!--                        <el-dropdown-item disabled>双皮奶</el-dropdown-item>
                         <el-dropdown-item divided>蚵仔煎</el-dropdown-item>-->
                       </el-dropdown-menu>
@@ -186,8 +187,10 @@ export default {
                     });
                 }else if (command==='修改密码'){
                 }
-                if (command==="修改密码"){
+                else if (command==="修改密码"){
                     this.$router.push('/changePassword')
+                }else if (command==="聊天") {
+                    this.$router.push('/chat')
                 }
             }
         }
